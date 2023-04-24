@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  api:
+    image: planningdiva/diva-challenge
+    container_name:  diva-challenge
+    ports:
+      - "8082:8080"
+    environment:
+      - PORT=:8080
+      - JWT_SECRET=${JWT_SECRET}
+    networks:
+      - divalocal
+
+networks:
+  divalocal:
+    driver: bridge
