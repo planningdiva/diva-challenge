@@ -29,4 +29,7 @@ GET `/alive`:  A call to this endpoint will return the text "alive" if the serve
 a header in the request, with the following format:  "Authorization: Bearer <JWT>" where <JWT> is the token received from the `'login` endpoint.
 
 POST `/slack`:  A call to this endpoint will post a message in our Planning Diva Slack space, so we can see that the coding assignment was successful.
-This endpoint also required authentication and should include a header with the same format as `/alive`.
+This endpoint also required authentication and should include a header with the same format as `/alive`.  This endpoint should include a body with the following format:
+{
+    "text": "Place a message here"
+}
