@@ -1,6 +1,6 @@
 # diva-challenge Coding Assignment
 
-This coding assignment is meant to test basic skills regarding the handling of auth tokens and API calls from from a React or Next.js app.
+This coding assignment is meant to test basic skills regarding the handling of auth tokens and API calls from a React or Next.js app.
 It is a straightforward project that is meant to test basic proficiency with server communications that we work with daily at Planning Diva.
 With that said, we are a new startup and creativity is important in our work.  Please feel free to add your own unique, creative ideas to this
 project!
