@@ -9,7 +9,7 @@ Time estimate:  1-4 hours.
 
 Instructions and guidelines:
 1. Create a React or Next.js project from scratch
-2. Build a re-usable component and render it to the screen.  This component should include:
+2. Build a reusable component and render it to the screen.  This component should include:
  - A button to check the status of the server.
  - A text field that contains a message.
  - A button to send a message to our engineering team, using the text from the above text field.
