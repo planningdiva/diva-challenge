@@ -26,7 +26,7 @@ You can find the challenge server at this address:  `https://diva-challenge-ul4c
 GET `/login`:  A call to this endpoint will return a JSON Web Token (JWT).  The token has a 15-second expiration.  No payload needs to be sent.
 
 GET `/alive`:  A call to this endpoint will return the text "alive" if the server is up.  This endpoint requires authentication with a JWT.  Include
-a header in the request, with the following format:  "Authorization: Bearer <JWT>" where <JWT> is the token received from the `'login` endpoint.
+a header in the request, with the following format:  "Authorization: Bearer JWT" where JWT is the token received from the `/login` endpoint.
 
 POST `/slack`:  A call to this endpoint will post a message in our Planning Diva Slack space, so we can see that the coding assignment was successful.
 This endpoint also required authentication and should include a header with the same format as `/alive`.  This endpoint should include a body with the following format:  `{"text": "Place a message here"}`
