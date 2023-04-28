@@ -22,6 +22,11 @@ type response struct {
 	JWT string `json:"jwt"`
 }
 
+func decodeJSONBody(req *http.Request, data interface{}) error {
+	defer req.Body.Close()
+	return json.NewDecoder(req.Body).Decode(data)
+}
+
 func initJWT() {
 	tokenAuth = jwtauth.New("HS256", []byte("secret"), nil)
 }
@@ -44,18 +49,35 @@ func router() http.Handler {
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
-		r.Post("/alive", func(w http.ResponseWriter, r *http.Request) {
-			_, _, _ = jwtauth.FromContext(r.Context())
-			w.Write([]byte("alive"))
+		r.Get("/alive", func(resp http.ResponseWriter, req *http.Request) {
+			_, _, _ = jwtauth.FromContext(req.Context())
+			resp.Write([]byte("alive"))
+		})
+		r.Post("/slack", func(resp http.ResponseWriter, req *http.Request) {
+			var body struct {
+				Text string `json:"text"`
+			}
+			err := decodeJSONBody(req, &body)
+			if err != nil {
+				logrus.Errorf("%v", err)
+				resp.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			err = postWebhook(body.Text)
+			if err != nil {
+				logrus.Errorf("%v", err)
+				resp.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 		})
 	})
 
 	r.Group(func(r chi.Router) {
-		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/login", func(resp http.ResponseWriter, req *http.Request) {
 			var token string
 			expireTime := time.Now().Add(15 * time.Second)
 			token = makeToken(expireTime)
-			http.SetCookie(w, &http.Cookie{
+			http.SetCookie(resp, &http.Cookie{
 				HttpOnly: true,
 				Expires:  expireTime,
 				SameSite: http.SameSiteLaxMode,
@@ -63,8 +85,8 @@ func router() http.Handler {
 				Value:    token,
 			})
 			jwtBody := response{JWT: token}
-			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(jwtBody)
+			resp.WriteHeader(http.StatusOK)
+			json.NewEncoder(resp).Encode(jwtBody)
 		})
 	})
 	return r
