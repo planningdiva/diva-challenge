@@ -51,6 +51,7 @@ func router() http.Handler {
 		r.Use(jwtauth.Authenticator)
 		r.Get("/alive", func(resp http.ResponseWriter, req *http.Request) {
 			_, _, _ = jwtauth.FromContext(req.Context())
+			resp.WriteHeader(http.StatusOK)
 			resp.Write([]byte("alive"))
 		})
 		r.Post("/slack", func(resp http.ResponseWriter, req *http.Request) {
@@ -69,6 +70,7 @@ func router() http.Handler {
 				resp.WriteHeader(http.StatusInternalServerError)
 				return
 			}
+			resp.WriteHeader(http.StatusOK)
 		})
 	})
 
