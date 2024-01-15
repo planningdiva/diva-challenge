@@ -4,15 +4,21 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
-const port = ":8080"
+const (
+	port                 = ":8080"
+	webhookPlainText     = "WEBHOOK_URL"
+	webhookdOldPlainText = "WEBHOOK_URL_OLD"
+)
 
 var (
 	tokenAuth *jwtauth.JWTAuth //Persistent private object for creating valid JWTs
@@ -97,6 +103,23 @@ func router() http.Handler {
 func main() {
 	logrus.SetReportCaller(true)
 	initJWT()
+
+	var envVars map[string]string
+	envVars, err := godotenv.Read(".env")
+	if err != nil {
+		logrus.Warnf("No .env file.  Loading from environment: %v", err)
+	}
+	if envVars[webhookPlainText] == "" {
+		envVars[webhookPlainText] = os.Getenv(webhookPlainText)
+	}
+	if envVars[webhookdOldPlainText] == "" {
+		envVars[webhookdOldPlainText] = os.Getenv(webhookdOldPlainText)
+	}
+	if envVars[webhookPlainText] == "" { //Dont fail if the old webhook is missing
+		logrus.Fatal("No environment var for slack webhook")
+	}
+	initSlack(envVars[webhookPlainText], envVars[webhookdOldPlainText])
+
 	fmt.Printf("Starting server on %v\n", port)
 	http.ListenAndServe(port, router())
 }
