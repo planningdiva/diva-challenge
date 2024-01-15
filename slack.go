@@ -14,7 +14,7 @@ var (
 )
 
 func initSlack(webhookVar, webhookOldVar string) {
-	webhook = webhookOldVar
+	webhook = webhookVar
 	webhookOld = webhookOldVar
 }
 
