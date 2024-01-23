@@ -83,13 +83,13 @@ func router() http.Handler {
 			err := decodeJSONBody(req, &body)
 			if err != nil {
 				logrus.Errorf("%v", err)
-				resp.WriteHeader(http.StatusBadRequest)
+				respondJSON(resp, http.StatusBadRequest, nil)
 				return
 			}
 			err = postWebhook(body.Text)
 			if err != nil {
 				logrus.Errorf("%v", err)
-				resp.WriteHeader(http.StatusInternalServerError)
+				respondJSON(resp, http.StatusInternalServerError, nil)
 				return
 			}
 			respondJSON(resp, http.StatusOK, baseResponse{Message: "Success"})
