@@ -28,9 +28,25 @@ type response struct {
 	JWT string `json:"jwt"`
 }
 
+type baseResponse struct {
+	Message string `json:"message"`
+}
+
+func EncodeJSONBody(resp http.ResponseWriter, data interface{}) error {
+	return json.NewEncoder(resp).Encode(data)
+}
+
 func decodeJSONBody(req *http.Request, data interface{}) error {
 	defer req.Body.Close()
 	return json.NewDecoder(req.Body).Decode(data)
+}
+
+// RespondJSON is the standard wrapper used in diva-server for creating and sending JSON endpoint responses
+func respondJSON(resp http.ResponseWriter, status int, data interface{}) {
+	resp.WriteHeader(status)
+	if data != nil {
+		EncodeJSONBody(resp, data)
+	}
 }
 
 func initJWT() {
@@ -76,7 +92,7 @@ func router() http.Handler {
 				resp.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-			resp.WriteHeader(http.StatusOK)
+			respondJSON(resp, http.StatusOK, baseResponse{Message: "Success"})
 		})
 	})
 
